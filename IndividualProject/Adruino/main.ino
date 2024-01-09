@@ -33,7 +33,6 @@ void loop() {
   float voltage = analogValue * (5.0 / 1023.0); // Convert to voltage
   float lm35Temperature = voltage * 100.0; // Convert voltage to temperature
 
-  // Send data in a simple, comma-separated format
   Serial.print(dhtTemperature);
   Serial.print(",");
   Serial.print(humidity);
