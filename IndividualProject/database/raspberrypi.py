@@ -43,29 +43,35 @@ try:
         while True:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
-                print("Received line:", line)  # Debug print
+                parts = line.split(',')
+                print(f'Line: {line}')
+                print(f'Parts: {parts}')
+                
+                if len(parts) == 3:
+                    try:
+                        print(type(parts[0]))    
+                        dht_temp = float(parts[0])
+                        humidity = float(parts[1])
+                        lm35_temp = float(parts[2])
+                        
+                        print(type(dht_temp))
+                        print(type(humidity))
+                        print(type(lm35_temp))
 
-                try:
-                    parts = line.split(',')
-                    dht_temp = float(parts[0].split(':')[1].strip().strip('°C'))
-                    humidity = float(parts[1].split(':')[1].strip('%').strip())
-                    lm35_temp = float(parts[2].split(':')[1].strip('°C').strip())
+                        current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-                    # Debug print the parsed values
-                    print(f"DHT Temp: {dht_temp}, Humidity: {humidity}, LM35 Temp: {lm35_temp}")
+                        mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
+                                                VALUES (%s, %s, %s, %s) """
+                        record = (dht_temp, humidity, lm35_temp, current_time)
+                        cursor.execute(mySql_insert_query, record)
+                        connection.commit()
+                        print("Record inserted successfully into SensorData table")
 
-                    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-                    mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
-                                            VALUES (%s, %s, %s, %s) """
-                    record = (dht_temp, humidity, lm35_temp, current_time)
-                    cursor.execute(mySql_insert_query, record)
-                    connection.commit()
-                    print("Record inserted successfully into SensorData table")
-
-                except (ValueError, IndexError) as e:
-                    print(f"Error parsing data: {e}")
-                    continue
+                    except ValueError as e:
+                        print(f"Error parsing data: {e}")
+                        continue
+                else:
+                    print("Incomplete data received")
 
 except Error as e:
     print("Error while connecting to MySQL", e)
