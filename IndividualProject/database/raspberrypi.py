@@ -27,36 +27,35 @@ def create_table(cursor, table_name):
     except Error as e:
         print(f"Error creating table {table_name}: {e}")
 
-# Connect to MySQL Server (without specifying database)
+# Connect to MySQL Server
 try:
     connection = mysql.connector.connect(**config)
     if connection.is_connected():
         cursor = connection.cursor()
-        # Create database if it doesn't exist
         create_database(cursor, 'Arduino')
-        
-        # Now connect to the database
         connection.database = 'Arduino'
-
-        # Create table if it doesn't exist
         create_table(cursor, 'SensorData')
 
         # Setup serial connection
-        ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
+        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
         ser.flush()
 
         while True:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
-                # Assuming the line format is "DHT Temp: [temp], Humidity: [humidity]%, LM35 Temp: [temp]"
                 parts = line.split(',')
-                dht_temp = parts[0].split(':')[1].strip()
-                humidity = parts[1].split(':')[1].strip('%').strip()
-                lm35_temp = parts[2].split(':')[1].strip('°C').strip()
+                print(parts)
+                try:
+                    dht_temp = float(parts[0].split(':')[1].strip())
+                    humidity = float(parts[1].split(':')[1].strip('%').strip())
+                    lm35_temp = float(parts[2].split(':')[1].strip('°C').strip())
+                    print(dht_temp, humidity, lm35_temp)
+                except ValueError:
+                    print("Invalid data format received.")
+                    continue
                 
                 current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-                # Inserting data into table
                 mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
                                         VALUES (%s, %s, %s, %s) """
                 record = (dht_temp, humidity, lm35_temp, current_time)

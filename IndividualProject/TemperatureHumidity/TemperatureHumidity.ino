@@ -29,8 +29,9 @@ void loop() {
   float humidity = event.relative_humidity;
 
   // Read temperature from LM35
-  float voltage = analogRead(LM35PIN) * 5.0 / 1024.0; // Convert analog reading to voltage
-  float lm35Temperature = isnan(voltage) ? 0 : voltage * 100.0; // Convert voltage to temperature in °C
+  int analogValue = analogRead(LM35PIN); // Read analog value from LM35
+  float voltage = (analogValue / 1023.0) * 5.0; // Convert to voltage (0-5V)
+  float lm35Temperature = voltage * 100.0; // Convert voltage to temperature in °C (10 mV per degree)
 
   // Print all readings in one line
   Serial.print("DHT Temp: ");
