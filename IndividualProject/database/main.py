@@ -41,6 +41,9 @@ def get_sensor_data():
             connection.close()
             print("MySQL connection is closed")
 
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8080)
+    
 def create_database(cursor, db_name):
     try:
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name};")
