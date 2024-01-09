@@ -43,18 +43,21 @@ try:
         while True:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
-                print(line)
+                print("Received line:", line)  # Debug print
+
                 parts = line.split(',')
-                print(parts)
-                try:
-                    dht_temp = float(parts[0].split(':')[1].strip())
-                    humidity = float(parts[1].split(':')[1].strip('%').strip())
-                    lm35_temp = float(parts[2].split(':')[1].strip('°C').strip())
-                    print(dht_temp, humidity, lm35_temp)
-                except ValueError:
-                    print("Invalid data format received.")
+                if len(parts) < 3:
+                    print("Invalid data format")
                     continue
-                
+
+                try:
+                    dht_temp = parts[0].split(':')[1].strip().strip('°C')
+                    humidity = parts[1].split(':')[1].strip('%').strip()
+                    lm35_temp = parts[2].split(':')[1].strip('°C').strip()
+                except IndexError:
+                    print("Error parsing data")
+                    continue
+
                 current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
                 mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
