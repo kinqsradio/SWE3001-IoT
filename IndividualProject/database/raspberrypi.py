@@ -45,27 +45,27 @@ try:
                 line = ser.readline().decode('utf-8').rstrip()
                 print("Received line:", line)  # Debug print
 
-                parts = line.split(',')
-                if len(parts) < 3:
-                    print("Invalid data format")
-                    continue
-
                 try:
-                    dht_temp = parts[0].split(':')[1].strip().strip('°C')
-                    humidity = parts[1].split(':')[1].strip('%').strip()
-                    lm35_temp = parts[2].split(':')[1].strip('°C').strip()
-                except IndexError:
-                    print("Error parsing data")
+                    parts = line.split(',')
+                    dht_temp = float(parts[0].split(':')[1].strip().strip('°C'))
+                    humidity = float(parts[1].split(':')[1].strip('%').strip())
+                    lm35_temp = float(parts[2].split(':')[1].strip('°C').strip())
+
+                    # Debug print the parsed values
+                    print(f"DHT Temp: {dht_temp}, Humidity: {humidity}, LM35 Temp: {lm35_temp}")
+
+                    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                    mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
+                                            VALUES (%s, %s, %s, %s) """
+                    record = (dht_temp, humidity, lm35_temp, current_time)
+                    cursor.execute(mySql_insert_query, record)
+                    connection.commit()
+                    print("Record inserted successfully into SensorData table")
+
+                except (ValueError, IndexError) as e:
+                    print(f"Error parsing data: {e}")
                     continue
-
-                current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-                mySql_insert_query = """INSERT INTO SensorData (DHTTemperature, Humidity, LM35Temperature, Time) 
-                                        VALUES (%s, %s, %s, %s) """
-                record = (dht_temp, humidity, lm35_temp, current_time)
-                cursor.execute(mySql_insert_query, record)
-                connection.commit()
-                print("Record inserted successfully into SensorData table")
 
 except Error as e:
     print("Error while connecting to MySQL", e)

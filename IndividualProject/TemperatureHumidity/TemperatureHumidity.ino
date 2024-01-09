@@ -30,8 +30,8 @@ void loop() {
 
   // Read temperature from LM35
   int analogValue = analogRead(LM35PIN); // Read analog value from LM35
-  float voltage = (analogValue / 1023.0) * 5.0; // Convert to voltage (0-5V)
-  float lm35Temperature = voltage * 100.0; // Convert voltage to temperature in °C (10 mV per degree)
+  float voltage = analogValue * (5.0 / 1023.0); // Convert to voltage
+  float lm35Temperature = voltage * 100.0; // Convert voltage to temperature
 
   // Print all readings in one line
   Serial.print("DHT Temp: ");
@@ -41,4 +41,5 @@ void loop() {
   Serial.print("%, LM35 Temp: ");
   Serial.print(lm35Temperature);
   Serial.println("°C");
+
 }
