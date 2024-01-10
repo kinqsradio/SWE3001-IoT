@@ -4,3 +4,11 @@ npm install @material-ui/core @material-ui/icons
 yarn add @material-ui/core
 pip install flask-cors
 yarn add react-chartjs-2 chart.js
+
+
+5v -> Positive
+Ground -> Negative
+
+DHT11 -> Signal 2
+LM35 -> Anaglog A3 
+Led Light -> Signal 4
