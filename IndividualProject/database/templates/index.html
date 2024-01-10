@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+</head>
+<body>
+    <h1>Welcome to our API!</h1>
+    <p>You can access the data at <a href="/api/v1/sensor-data">/api/v1/sensor-data</a>.</p>
+
+    <h2>Data from get_sensor_data:</h2>
+    <ul>
+    {% for item in data %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

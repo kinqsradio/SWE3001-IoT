@@ -1,11 +1,11 @@
-from Flask import Flask, jsonify
-import threading
-import serial
+from flask import Flask, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
+from dbConfig import config
 
 
 app = Flask(__name__)
+
 @app.route('/api/v1/sensor-data', methods=['GET'])
 def get_sensor_data():
     try:
@@ -14,8 +14,6 @@ def get_sensor_data():
             cursor = connection.cursor()
             cursor.execute(f"SELECT * FROM SensorData ORDER BY id DESC LIMIT 10")
             records = cursor.fetchall()
-            print("Total number of rows in SensorData is: ", cursor.rowcount)
-            print("\nPrinting each SensorData record")
             
             data = []
             for row in records:
@@ -38,6 +36,11 @@ def get_sensor_data():
             cursor.close()
             connection.close()
             print("MySQL connection is closed")
+
+@app.route('/', methods=['GET'])
+def home():
+    data = get_sensor_data()
+    return render_template('index.html', data=data)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)
