@@ -48,7 +48,7 @@ def read_sensor_data():
 
             while True:
                 current_time = time.time()
-                if current_time - last_recorded_time >= 60:  # 60 seconds = 1 minute
+                if current_time - last_recorded_time >= 5:  # Record every X seconds
                     if ser.in_waiting > 0:
                         line = ser.readline().decode('utf-8').rstrip()
                         parts = line.split(',')
