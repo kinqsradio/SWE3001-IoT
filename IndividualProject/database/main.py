@@ -108,6 +108,6 @@ def home():
     return render_template('index.html', data=data)
 
 if __name__ == '__main__':
-    sensor_thread = threading.Thread(target=get_sensor_data().get_json(), daemon=True)
+    sensor_thread = threading.Thread(target=read_sensor_data, daemon=True)
     sensor_thread.start()
     app.run(host='192.168.2.4', port=8080)
