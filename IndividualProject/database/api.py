@@ -3,7 +3,6 @@ import mysql.connector
 from mysql.connector import Error
 from dbConfig import config
 
-
 app = Flask(__name__)
 
 @app.route('/api/v1/sensor-data', methods=['GET'])
@@ -14,7 +13,7 @@ def get_sensor_data():
         connection.database = 'Arduino' # Select database
         if connection.is_connected():
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM SensorData ORDER BY id DESC LIMIT 10")
+            cursor.execute("SELECT * FROM SensorData ORDER BY id DESC LIMIT 60")
             records = cursor.fetchall()
             
             for row in records:
