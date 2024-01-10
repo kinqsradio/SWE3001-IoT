@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 import threading
 import serial
 import mysql.connector
@@ -8,6 +9,7 @@ import time
 from dbConfig import config
 
 app = Flask(__name__)
+CORS(app)
 
 def create_database(cursor, db_name):
     try:
