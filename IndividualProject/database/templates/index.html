@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home Page</title>
+    <title>Sensor Data</title>
 </head>
 <body>
-    <h1>Welcome to our API!</h1>
-    <p>You can access the data at <a href="/api/v1/sensor-data">/api/v1/sensor-data</a>.</p>
-
-    <h2>Data from get_sensor_data:</h2>
+    <h1>Sensor Data</h1>
     <ul>
-    {% for item in data %}
-        <li>{{ item }}</li>
+    {% for record in data %}
+        <li>DHT Temperature: {{ record.DHTTemperature }}°C, Humidity: {{ record.Humidity }}%, LM35 Temperature: {{ record.LM35Temperature }}°C, Time: {{ record.Time }}</li>
     {% endfor %}
     </ul>
 </body>

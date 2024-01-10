@@ -8,38 +8,35 @@ app = Flask(__name__)
 
 @app.route('/api/v1/sensor-data', methods=['GET'])
 def get_sensor_data():
+    data = []
     try:
         connection = mysql.connector.connect(**config)
+        connection.database = 'Arduino' # Select database
         if connection.is_connected():
             cursor = connection.cursor()
-            cursor.execute(f"SELECT * FROM SensorData ORDER BY id DESC LIMIT 10")
+            cursor.execute("SELECT * FROM SensorData ORDER BY id DESC LIMIT 10")
             records = cursor.fetchall()
             
-            data = []
             for row in records:
                 data.append({
                     'DHTTemperature': row[1],
                     'Humidity': row[2],
                     'LM35Temperature': row[3],
-                    'Time': row[4]
+                    'Time': row[4].strftime('%Y-%m-%d %H:%M:%S') if row[4] else None
                 })
-            
-            # Only keep the recent 200 data
-            if len(data) > 200:
-                data = data[-200:]
-                
-            return jsonify(data)
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:
-        if connection.is_connected():
+        if connection and connection.is_connected():
             cursor.close()
             connection.close()
             print("MySQL connection is closed")
 
+    return jsonify(data)
+
 @app.route('/', methods=['GET'])
 def home():
-    data = get_sensor_data()
+    data = get_sensor_data().get_json()
     return render_template('index.html', data=data)
 
 if __name__ == '__main__':
