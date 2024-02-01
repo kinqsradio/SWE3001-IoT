@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Display</title>
+    <script>
+        function fetchSensorData() {
+            var deviceId = document.getElementById('deviceIdInput').value;
+            fetch(`/retrieve-sensor-data?device_id=${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sensorDataDisplay').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function fetchAllSensorData() {
+            fetch('/retrieve-all-sensor-data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('allSensorDataDisplay').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Sensor Data Viewer</h1>
+
+    <h2>Retrieve Data for Specific Device ID</h2>
+    <input type="text" id="deviceIdInput" placeholder="Enter Device ID">
+    <button onclick="fetchSensorData()">Fetch Data</button>
+    <pre id="sensorDataDisplay"></pre>
+
+    <h2>Retrieve Data for All Devices</h2>
+    <button onclick="fetchAllSensorData()">Fetch All Data</button>
+    <pre id="allSensorDataDisplay"></pre>
+</body>
+</html>
