@@ -15,10 +15,6 @@ def get_sensor_data(use_mock=False):
                 water_level = float(line)  # Please anyone doing water sensor level, set this to float
                 current_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 sensor_data = {
-                    "WaterLevel": water_level,
-                    "Time": current_datetime
-                }
-                sensor_data = {
                     "DeviceID": "WaterLevelSensor_01", 
                     "DeviceType": "WaterLevelSensor",
                     "Timestamp": current_datetime,

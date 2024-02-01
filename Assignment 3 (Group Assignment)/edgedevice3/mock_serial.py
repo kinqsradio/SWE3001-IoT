@@ -9,9 +9,9 @@ class MockSerial:
         # Simulate waiting for 2 seconds between readings
         time.sleep(2)
 
-        # Generate random motion sensor data (ON or OFF)
-        motion_state = random.choice(["ON", "OFF"])
-        return f"{motion_state}\n".encode()
+        # Generate fake random water level data
+        water_level = random.uniform(0, 100)  # Simulate water level between 0 and 100
+        return f"{water_level}\n".encode()
 
     def flush(self):
         pass  # No action needed for flush in mock

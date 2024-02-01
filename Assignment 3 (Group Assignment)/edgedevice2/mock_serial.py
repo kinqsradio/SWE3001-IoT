@@ -9,7 +9,7 @@ class MockSerial:
         # Simulate waiting for 2 seconds between readings
         time.sleep(2)
 
-        # Generate random motion sensor data (ON or OFF)
+        # Generate fake random motion sensor data (ON or OFF)
         motion_state = random.choice(["ON", "OFF"])
         return f"{motion_state}\n".encode()
 
