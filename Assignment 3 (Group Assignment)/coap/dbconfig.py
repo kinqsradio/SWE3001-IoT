@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import mysql.connector
 
 # Load ENV File
-load_dotenv()
+load_dotenv(override=True)
 
 # Set Up DB Config
 config = {
@@ -11,3 +11,6 @@ config = {
     'password': os.getenv(key='DB_PASSWORD'),
     'host': os.getenv(key='DB_HOST'),
 }
+
+mydb = mysql.connector.connect(**config)
+print(mydb)
