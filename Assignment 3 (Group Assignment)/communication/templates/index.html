@@ -5,36 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor Data Display</title>
     <script>
-        function fetchSensorData() {
-            var deviceId = document.getElementById('deviceIdInput').value;
-            fetch(`/retrieve-sensor-data?device_id=${deviceId}`)
+        function fetchSensorData(sensorId) {
+            fetch(`/retrieve-sensor-data?device_id=${sensorId}`)
                 .then(response => response.json())
-                .then(data => {
-                    document.getElementById('sensorDataDisplay').textContent = JSON.stringify(data, null, 2);
+                .then(response => {
+                    // Extracting and displaying only the 'data' part of the response
+                    let sensorData = response.data;
+                    document.getElementById(sensorId + '_Display').textContent = JSON.stringify(sensorData, null, 2);
                 })
                 .catch(error => console.error('Error:', error));
         }
-
-        function fetchAllSensorData() {
-            fetch('/retrieve-all-sensor-data')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('allSensorDataDisplay').textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => console.error('Error:', error));
+    
+        function updateAllSensorData() {
+            const sensors = ['MotionSensor_01', 'TemperatureHumidity_01', 'WaterLevelSensor_01'];
+            sensors.forEach(sensorId => fetchSensorData(sensorId));
         }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            setInterval(updateAllSensorData, 10000); // Update every 10 seconds
+            updateAllSensorData(); // Initial update
+        });
     </script>
+    
 </head>
 <body>
     <h1>Sensor Data Viewer</h1>
 
-    <h2>Retrieve Data for Specific Device ID</h2>
-    <input type="text" id="deviceIdInput" placeholder="Enter Device ID">
-    <button onclick="fetchSensorData()">Fetch Data</button>
-    <pre id="sensorDataDisplay"></pre>
+    <h2>Latest Data from Motion Sensor</h2>
+    <pre id="MotionSensor_01_Display"></pre>
 
-    <h2>Retrieve Data for All Devices</h2>
-    <button onclick="fetchAllSensorData()">Fetch All Data</button>
-    <pre id="allSensorDataDisplay"></pre>
+    <h2>Latest Data from Temperature and Humidity Sensor</h2>
+    <pre id="TemperatureHumidity_01_Display"></pre>
+
+    <h2>Latest Data from Water Level Sensor</h2>
+    <pre id="WaterLevelSensor_01_Display"></pre>
 </body>
 </html>

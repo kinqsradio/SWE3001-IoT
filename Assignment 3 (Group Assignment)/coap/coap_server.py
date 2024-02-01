@@ -65,23 +65,21 @@ class RetrieveSensorDataResource(Resource):
         try:
             connection = connect(**config, database='SensorDataDB')
             cursor = connection.cursor()
-            device_id = request.uri_query  # Assuming device_id is passed as a query parameter
-            
-            # Retrieve data using your existing function
+            device_id = request.uri_query.split('=')[1]
+
             data = retrieve_sensor_data(cursor, device_id)
             
-            # Check if data is not empty
             if data:
-                # Convert the data to JSON format
-                response.payload = json.dumps(data).encode('utf-8')
+                response.payload = json.dumps(data) #.encode('utf-8') ## May be no need to convert to string? still works fine
                 response.code = defines.Codes.CONTENT.number
             else:
+                # Send a JSON-formatted message even when no data is found
+                response.payload = json.dumps({"message": "No data found for the specified device ID"}) #.encode('utf-8') ## May be no need to convert to string? still works fine
                 response.code = defines.Codes.NOT_FOUND.number
-                response.payload = "No data found for the specified device ID.".encode('utf-8')
         except Error as e:
             print(f"Error retrieving data: {e}")
+            response.payload = json.dumps({"error": "Error in data retrieval"}) #.encode('utf-8') ## May be no need to convert to string? still works fine
             response.code = defines.Codes.INTERNAL_SERVER_ERROR.number
-            response.payload = "Error in data retrieval.".encode('utf-8')
         finally:
             cursor.close()
             connection.close()

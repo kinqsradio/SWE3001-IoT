@@ -26,20 +26,26 @@ def forward_to_coap_server(data):
     finally:
         client.stop()
 
-### Here is a problem
+## There is still something wrong with retrieve from coap server
+## Todo fix this
+# An error occurred while retrieving from CoAP server: Expecting ':' delimiter: line 1 column 14 (char 13)
 def retrieve_from_coap_server(device_id):
     client = HelperClient(server=(COAP_SERVER_HOST, COAP_SERVER_PORT))
     try:
         response = client.get(f"{COAP_RETRIEVE_RESOURCE_PATH}?device_id={device_id}")
         if response and response.payload:
-            # Convert the payload to JSON
-            return json.loads(response.payload.decode())
+            try:
+                # Try to convert the payload to JSON
+                return response.payload
+            except json.JSONDecodeError:
+                return response.payload
         else:
-            return None
+            return "Empty response from CoAP server"
     except Exception as e:
         return f"An error occurred while retrieving from CoAP server: {e}"
     finally:
         client.stop()
+
 
 @app.route('/to-coap-server', methods=['POST'])
 def receive_and_forward_data():
