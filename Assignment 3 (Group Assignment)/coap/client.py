@@ -11,6 +11,6 @@ if __name__ == "__main__":
     coap_thread.start()
     flask_thread.start()
 
-    # Wait for both servers to complete their execution (which might be indefinitely for server applications)
+    # Wait for both servers to complete their execution
     coap_thread.join()
     flask_thread.join()

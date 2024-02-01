@@ -11,7 +11,3 @@ config = {
     'password': os.getenv(key='DB_PASSWORD'),
     'host': os.getenv(key='DB_HOST'),
 }
-
-
-# mydb = mysql.connector.connect(**config)
-# print(mydb)

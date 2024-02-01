@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import requests
 
-# Renamed Flask app for clarity
 communication_server = Flask(__name__)
 
 @communication_server.route('/forward-edge-data', methods=['POST'])
