@@ -7,7 +7,8 @@ communication_server = Flask(__name__)
 @communication_server.route('/forward-edge-data', methods=['POST'])
 def forward_edge_data():
     data = request.json
-    print("Received data from Edge Device:", data)
+    # print("Received data from Edge Device:", data)
+    print(f"Received data from {data['DeviceType']} (ID: {data['DeviceID']}) at {data['Timestamp']}: {data['Data']}")
 
     forward_url = "http://127.0.0.1:5000/to-coap-server"
     try:

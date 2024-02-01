@@ -11,30 +11,24 @@ def get_sensor_data(use_mock=False):
     while True:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            parts = line.split(',')
-            if len(parts) == 3:
+            if line in ["ON", "OFF"]:
                 try:
-                    dht_temp = float(parts[0])
-                    humidity = float(parts[1])
-                    lm35_temp = float(parts[2])
                     current_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    motion_status = "Motion Detected" if line == "ON" else "Motion Not Detected"
                     sensor_data = {
-                        "DeviceID": "TemperatureHumidity_01",
-                        "DeviceType": "TemperatureHumidity",
+                        "DeviceID": "MotionSensor_01",
+                        "DeviceType": "MotionSensor",
                         "Timestamp": current_datetime,
                         "Data": {
-                            "DHTTemperature": dht_temp,
-                            "Humidity": humidity,
-                            "LM35Temperature": lm35_temp
+                            "MotionStatus": motion_status
                         }
                     }
                     yield sensor_data
                 except ValueError as e:
                     print(f"Error parsing data: {e}")
             else:
-                print("Incomplete data received")
-        time.sleep(1)  # Small delay to prevent CPU overuse
-
+                print("Invalid data received")
+        time.sleep(2)  # Adjust to match the sensor's frequency
 
 def send_data_to_comm_server(data, url):
     """Send data to the Communication Server."""
