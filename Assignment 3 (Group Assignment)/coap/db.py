@@ -30,28 +30,25 @@ def create_table(cursor, device_id, sensor_data):
 def retrieve_sensor_data(cursor, device_id):
     table_name = f"{device_id}_Table"
     try:
-        query = f"SELECT * FROM {table_name}"
+        query = f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 60"
         cursor.execute(query)
-        rows = cursor.fetchall()
+        records = cursor.fetchall()
 
-        if rows:
-            columns = [column[0] for column in cursor.description]
-            data_list = []
-            for row in rows:
-                row_data = {}
-                for col, val in zip(columns, row):
-                    if isinstance(val, datetime):
-                        # Convert datetime to string
-                        row_data[col] = val.strftime("%Y-%m-%d %H:%M:%S")
-                    else:
-                        row_data[col] = val
-                data_list.append(row_data)
-            return data_list
-        else:
-            return None
+        columns = [column[0] for column in cursor.description]
+        data_list = []
+        for row in records:
+            row_data = {}
+            for col, val in zip(columns, row):
+                if isinstance(val, datetime):
+                    # Convert datetime to string
+                    row_data[col] = val.strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    row_data[col] = val
+            data_list.append(row_data)
     except Error as e:
         print(f"Error retrieving data from {table_name}: {e}")
-        return None
+
+    return data_list
     
 def get_all_device_ids():
     device_ids = []

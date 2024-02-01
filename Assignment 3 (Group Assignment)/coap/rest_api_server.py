@@ -33,18 +33,12 @@ def retrieve_from_coap_server(device_id):
     client = HelperClient(server=(COAP_SERVER_HOST, COAP_SERVER_PORT))
     try:
         response = client.get(f"{COAP_RETRIEVE_RESOURCE_PATH}?device_id={device_id}")
-        if response and response.payload:
-            try:
-                # Try to convert the payload to JSON
-                return response.payload
-            except json.JSONDecodeError:
-                return response.payload
-        else:
-            return "Empty response from CoAP server"
     except Exception as e:
-        return f"An error occurred while retrieving from CoAP server: {e}"
+        print( f"An error occurred while retrieving from CoAP server: {e}" )
     finally:
         client.stop()
+
+    return response.payload
 
 
 @app.route('/to-coap-server', methods=['POST'])
@@ -62,9 +56,12 @@ def get_sensor_data():
 
     coap_response = retrieve_from_coap_server(device_id)
     if coap_response is not None:
-        return jsonify({"message": "Data retrieved from CoAP server", "data": coap_response})
+        # return jsonify({"message": "Data retrieved from CoAP server", "data": coap_response})
+        return jsonify(coap_response)
     else:
-        return jsonify({"error": "Failed to retrieve data or empty response from CoAP server"}), 500
+        # return jsonify({"error": "Failed to retrieve data or empty response from CoAP server"}), 500
+        print('Failed to retrieve data or empty response from CoAP server')
+        return jsonify(coap_response)
 
 
 @app.route('/from-coap-server/all', methods=['GET'])
@@ -77,7 +74,8 @@ def get_all_sensor_data():
         if response is not None:
             all_data[device_id] = response
 
-    return jsonify({"message": "Data retrieved from CoAP server for all devices", "data": all_data})
+    # return jsonify({"message": "Data retrieved from CoAP server for all devices", "data": all_data})
+    return jsonify(all_data)
 
 def run_flask_app():
     app.run(host='127.0.0.1', port=5000, debug=True, use_reloader=False)
