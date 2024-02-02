@@ -11,7 +11,11 @@ app = Flask(__name__)
 CORS(app)
 
 """
-Send Sensor Data to CoAP Server
+This will be use to send data to the CoAP server!
+As we are opening port as HTTP/HTTPS, we wont be able to send data to the CoAP server directly.
+
+There were another option that can be use in edgedevices to send data directly to CoAP server through CoAP protocol.
+This will be just a back up case if we are not able to send data to the CoAP server directly.
 """
 @app.route('/to-coap-server', methods=['POST'])
 def receive_and_forward_data():
@@ -20,6 +24,10 @@ def receive_and_forward_data():
     coap_response = forward_to_coap_server(data)
     return jsonify({"message": "Data forwarded to CoAP server", "coap_response": coap_response})
 
+
+"""
+Retrieve sensor data from the database and return it in JSON format
+"""
 @app.route('/retrieve-sensor-data', methods=['GET'])
 def retrieve_sensor_data():
     aggregated_data = []  # Initialize an empty list to aggregate data for all devices

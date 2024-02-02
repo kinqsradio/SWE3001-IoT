@@ -2,5 +2,5 @@ npx create-react-app sensor-dashboard --template typescript
 cd sensor-dashboard
 npm uninstall @material-ui/core
 npm install react-router-dom @mui/material @mui/icons-material @emotion/react @emotion/styled axios chart.js react-chartjs-2
-npm install --legacy-peer-deps
+npm install @mui/styles --legacy-peer-deps
 npm start
