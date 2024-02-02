@@ -12,5 +12,5 @@ config = {
     'host': os.getenv(key='DB_HOST'),
 }
 
-mydb = mysql.connector.connect(**config)
-print(mydb)
+# mydb = mysql.connector.connect(**config)
+# print(mydb)

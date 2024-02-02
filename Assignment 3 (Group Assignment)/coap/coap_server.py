@@ -1,10 +1,10 @@
 from coapthon.server.coap import CoAP
 from coapthon.resources.resource import Resource
 from coapthon import defines
-from db import create_database, create_table
+from db_helper import create_database, create_table
 import json
 from mysql.connector import connect, Error
-from dbconfig import config
+from config import config
 
 class SensorDataResource(Resource):
     def __init__(self, name="SensorDataResource"):

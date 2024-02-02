@@ -1,5 +1,5 @@
 from mysql.connector import connect, Error
-from dbconfig import config
+from config import config
 from datetime import datetime
 
 def create_database(cursor, db_name):
