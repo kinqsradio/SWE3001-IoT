@@ -41,7 +41,7 @@ def retrieve_all_sensor_data():
 @communication_server.route('/')
 def home():
     try:
-        data = retrieve_all_sensor_data()
+        data = retrieve_all_sensor_data().get_json()
         return render_template('index.html', data=data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
