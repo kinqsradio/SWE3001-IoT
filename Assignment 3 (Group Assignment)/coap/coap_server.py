@@ -55,44 +55,11 @@ class SensorDataResource(Resource):
             cursor.close()
             connection.close()
 
-class RetrieveSensorDataResource(Resource):
-    def __init__(self, name="RetrieveSensorDataResource"):
-        super(RetrieveSensorDataResource, self).__init__(name)
-        self.payload = "Retrieve Sensor Data Resource"
-
-    def render_GET(self, request):
-        response = self.init_resource(request, self)
-        try:
-            connection = connect(**config, database='SensorDataDB')
-            cursor = connection.cursor()
-            device_id = request.uri_query.split('=')[1]
-
-            data = retrieve_sensor_data(cursor, device_id)
-            response.payload = json.dumps(data) #.encode('utf-8')  # Wrap data in a dictionary
-            # response.payload = json.dumps(data) #.encode('utf-8') ## May be no need to convert to string? still works fine
-            response.code = defines.Codes.CONTENT.number
-            # if data:
-            #     response.payload = json.dumps(data) #.encode('utf-8') ## May be no need to convert to string? still works fine
-            #     response.code = defines.Codes.CONTENT.number
-            # else:
-            #     # Send a JSON-formatted message even when no data is found
-            #     response.payload = json.dumps({"message": "No data found for the specified device ID"}) #.encode('utf-8') ## May be no need to convert to string? still works fine
-            #     response.code = defines.Codes.NOT_FOUND.number
-        except Error as e:
-            print(f"Error retrieving data: {e}")
-            response.payload = json.dumps(data)
-            # response.payload = json.dumps({"error": "Error in data retrieval"}) #.encode('utf-8') ## May be no need to convert to string? still works fine
-            response.code = defines.Codes.INTERNAL_SERVER_ERROR.number
-        finally:
-            cursor.close()
-            connection.close()
-        return response
     
 class MyCoAPServer(CoAP):
     def __init__(self, host, port):
         CoAP.__init__(self, (host, port))
         self.add_resource('sensor-data/', SensorDataResource())
-        self.add_resource('retrieve-sensor-data/', RetrieveSensorDataResource())
 
 
 def run_coap_server():

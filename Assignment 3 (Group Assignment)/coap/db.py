@@ -27,11 +27,10 @@ def create_table(cursor, device_id, sensor_data):
     cursor.execute(create_statement)
     print(f"Table '{table_name}' created or already exists.")
 
-def retrieve_sensor_data(cursor, device_id):
+def retrieve_data(cursor, device_id):
     table_name = f"{device_id}_Table"
     try:
-        query = f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 60"
-        cursor.execute(query)
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 60")
         records = cursor.fetchall()
 
         columns = [column[0] for column in cursor.description]
@@ -50,11 +49,9 @@ def retrieve_sensor_data(cursor, device_id):
 
     return data_list
     
-def get_all_device_ids():
+def get_all_device_ids(cursor):
     device_ids = []
     try:
-        connection = connect(**config, database='SensorDataDB')
-        cursor = connection.cursor()
         cursor.execute("SHOW TABLES")
         for (table_name,) in cursor:
             if table_name.endswith('_Table'):
@@ -64,8 +61,6 @@ def get_all_device_ids():
                 device_ids.append(table_name)  # If not ending with '_Table', add the full table name
     except Error as e:
         print(f"Database error: {e}")
-    finally:
-        cursor.close()
-        connection.close()
+    
     
     return device_ids
