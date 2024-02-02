@@ -8,10 +8,14 @@
 <body>
     <h1>Sensor Data Viewer</h1>
     {% if data %}
-        {% for device_id, sensor_data in data.items() %}
-            <h2>Latest Data for {{ device_id }}</h2>
-            <pre>{{ sensor_data | tojson | safe }}</pre>
+        <ul>
+        {% for sensor_data in data %}
+            <li>
+                Device ID: {{ sensor_data.device_id }}<br>
+                Data: {{ sensor_data.sensor_data | tojson | safe }}
+            </li>
         {% endfor %}
+        </ul>
     {% else %}
         <p>No data available.</p>
     {% endif %}
