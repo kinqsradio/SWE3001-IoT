@@ -27,7 +27,6 @@ def forward_edge_data():
 @communication_server.route('/retrieve-all-sensor-data', methods=['GET'])
 def retrieve_all_sensor_data():
     retrieve_url = "http://127.0.0.1:5000/retrieve-sensor-data"
-
     try:
         retrieve_response = requests.get(retrieve_url)
         if retrieve_response.status_code == 200:
@@ -41,19 +40,11 @@ def retrieve_all_sensor_data():
 
 @communication_server.route('/')
 def home():
-    data = None
     try:
-        # Direct HTTP request to fetch data
-        retrieve_response = requests.get("http://127.0.0.1:5000/retrieve-sensor-data")
-        if retrieve_response.status_code == 200:
-            data = retrieve_response.json()
-        else:
-            data = {"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}
+        data = retrieve_all_sensor_data()
+        return render_template('index.html', data=data)
     except Exception as e:
-        data = {"error": str(e)}
-
-    # Pass the data to the template
-    return render_template('index.html', data=data)
+        return jsonify({"error": str(e)}), 500
 
 
 
