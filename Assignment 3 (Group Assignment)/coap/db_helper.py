@@ -30,7 +30,7 @@ def create_table(cursor, device_id, sensor_data):
 def retrieve_data(cursor, device_id):
     table_name = f"{device_id}_Table"
     try:
-        cursor.execute(f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 60")
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 1")
         records = cursor.fetchall()
 
         columns = [column[0] for column in cursor.description]
