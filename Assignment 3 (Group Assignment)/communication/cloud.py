@@ -2,8 +2,10 @@ from flask import Flask, request, jsonify
 from flask import Flask, render_template
 import requests
 import json
+from flask_cors import CORS
 
 communication_server = Flask(__name__)
+CORS(communication_server)
 
 
 @communication_server.route('/forward-edge-data', methods=['POST'])
