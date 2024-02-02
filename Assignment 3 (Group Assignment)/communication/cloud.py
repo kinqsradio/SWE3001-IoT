@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask import Flask, render_template
 import requests
+import json
 
 communication_server = Flask(__name__)
 
@@ -30,15 +31,27 @@ def retrieve_all_sensor_data():
     try:
         retrieve_response = requests.get(retrieve_url)
         if retrieve_response.status_code == 200:
-            data = retrieve_response.content.decode()
+            data = retrieve_response.json()  # Directly use .json() to parse the JSON response
+        else:
+            return jsonify({"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}), 500
     except Exception as e:
-        print(e)
+        return jsonify({"error": str(e)}), 500
+
     return jsonify(data)
 
 @communication_server.route('/')
 def home():
-    data = retrieve_all_sensor_data().get_json()
+    try:
+        response = retrieve_all_sensor_data().get_json()
+        if isinstance(response, str):  # If the response is a string, attempt to load it as JSON
+            data = json.loads(response)
+        else:
+            data = response  # If it's already a dict, use it directly
+    except Exception as e:
+        data = {"error": str(e)}
+
     return render_template('index.html', data=data)
+
 
 
 def run_communication_server():
