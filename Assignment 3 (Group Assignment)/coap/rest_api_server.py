@@ -30,26 +30,26 @@ Retrieve sensor data from the database and return it in JSON format
 """
 @app.route('/retrieve-sensor-data', methods=['GET'])
 def retrieve_sensor_data():
-    aggregated_data = []  # Initialize an empty list to aggregate data for all devices
+    aggregated_data = []  
     try:
-        connection = connect(**config)  # Establish a connection to the database
+        connection = connect(**config)  
         cursor = connection.cursor()
-        connection.database = "SensorDataDB"  # Select your database
-        device_ids = get_all_device_ids(cursor)  # Fetch all device IDs from the database
+        connection.database = "SensorDataDB"  
+        device_ids = get_all_device_ids(cursor)  
         
         for device_id in device_ids:
-            device_data = retrieve_data(cursor, device_id)  # Fetch data for each device
+            device_data = retrieve_data(cursor, device_id) 
             # Append device data to the aggregated list
             aggregated_data.append({"device_id": device_id, "data": device_data})
     except Error as e:
         print(f"Database error: {e}")
-        return jsonify({"error": str(e)}), 500  # Return an error response if a database error occurs
+        return jsonify({"error": str(e)}), 500  
     finally:
         if connection.is_connected():
             cursor.close()
-            connection.close()  # Ensure connection is closed after operation
+            connection.close() 
 
-    return jsonify(aggregated_data)  # Return the aggregated data for all devices in JSON format
+    return jsonify(aggregated_data)
 
 
 def run_flask_app():
