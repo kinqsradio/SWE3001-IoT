@@ -22,22 +22,27 @@ def receive_and_forward_data():
 
 @app.route('/retrieve-sensor-data', methods=['GET'])
 def retrieve_sensor_data():
+    aggregated_data = []  # Initialize an empty list to aggregate data for all devices
     try:
-        connection = connect(**config)
+        connection = connect(**config)  # Establish a connection to the database
         cursor = connection.cursor()
-        connection.database = "SensorDataDB"
-        device_ids = get_all_device_ids(cursor)
+        connection.database = "SensorDataDB"  # Select your database
+        device_ids = get_all_device_ids(cursor)  # Fetch all device IDs from the database
+        
         for device_id in device_ids:
-            data = retrieve_data(cursor, device_id)
-            print(f"Data for device ID {device_id}: {data}")
-        print(f"Device IDs: {device_ids}")
+            device_data = retrieve_data(cursor, device_id)  # Fetch data for each device
+            # Append device data to the aggregated list
+            aggregated_data.append({"device_id": device_id, "data": device_data})
     except Error as e:
-        print(f"Error connecting to database: {e}")
+        print(f"Database error: {e}")
+        return jsonify({"error": str(e)}), 500  # Return an error response if a database error occurs
     finally:
         if connection.is_connected():
             cursor.close()
-            connection.close()
-    return jsonify(data)
+            connection.close()  # Ensure connection is closed after operation
+
+    return jsonify(aggregated_data)  # Return the aggregated data for all devices in JSON format
+
 
 def run_flask_app():
     app.run(host='127.0.0.1', port=5000, debug=True, use_reloader=False)

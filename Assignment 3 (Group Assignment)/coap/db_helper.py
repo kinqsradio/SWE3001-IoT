@@ -55,10 +55,10 @@ def get_all_device_ids(cursor):
         cursor.execute("SHOW TABLES")
         for (table_name,) in cursor:
             if table_name.endswith('_Table'):
-                device_id = table_name[:-6]  # Remove '_Table' suffix to get the base device ID
+                device_id = table_name[:-6]
                 device_ids.append(device_id)
             else:
-                device_ids.append(table_name)  # If not ending with '_Table', add the full table name
+                device_ids.append(table_name)
     except Error as e:
         print(f"Database error: {e}")
     

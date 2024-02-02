@@ -4,18 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor Data Display</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .sensor-data { margin-bottom: 20px; }
+        .sensor-title { font-weight: bold; }
+        .data-json { white-space: pre-wrap; }
+    </style>
 </head>
 <body>
     <h1>Sensor Data Viewer</h1>
+
     {% if data %}
-        <ul>
-        {% for sensor_data in data %}
-            <li>
-                Device ID: {{ sensor_data.device_id }}<br>
-                Data: {{ sensor_data.sensor_data | tojson | safe }}
-            </li>
-        {% endfor %}
-        </ul>
+        {% if data.error %}
+            <p>Error: {{ data.error }}</p>
+        {% else %}
+            {% for device in data %}
+                <div class="sensor-data">
+                    <p class="sensor-title">Device ID: {{ device.device_id }}</p>
+                    <p>Data:</p>
+                    <pre class="data-json">{{ device.data | tojson | safe }}</pre>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% else %}
         <p>No data available.</p>
     {% endif %}

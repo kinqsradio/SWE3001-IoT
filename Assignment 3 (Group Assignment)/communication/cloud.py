@@ -31,7 +31,7 @@ def retrieve_all_sensor_data():
     try:
         retrieve_response = requests.get(retrieve_url)
         if retrieve_response.status_code == 200:
-            data = retrieve_response.json()  # Directly use .json() to parse the JSON response
+            data = retrieve_response.json()
         else:
             return jsonify({"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}), 500
     except Exception as e:
@@ -41,15 +41,18 @@ def retrieve_all_sensor_data():
 
 @communication_server.route('/')
 def home():
+    data = None
     try:
-        response = retrieve_all_sensor_data().get_json()
-        if isinstance(response, str):  # If the response is a string, attempt to load it as JSON
-            data = json.loads(response)
+        # Direct HTTP request to fetch data
+        retrieve_response = requests.get("http://127.0.0.1:5000/retrieve-sensor-data")
+        if retrieve_response.status_code == 200:
+            data = retrieve_response.json()
         else:
-            data = response  # If it's already a dict, use it directly
+            data = {"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}
     except Exception as e:
         data = {"error": str(e)}
 
+    # Pass the data to the template
     return render_template('index.html', data=data)
 
 
