@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from coap_helper import forward_to_coap_server
 from config import config
-from db_helper import get_all_device_ids
+from db_helper import get_all_device_ids, retrieve_data
 from mysql.connector import connect, Error
 
 # Flask App Setup
@@ -27,20 +27,17 @@ def retrieve_sensor_data():
         cursor = connection.cursor()
         connection.database = "SensorDataDB"
         device_ids = get_all_device_ids(cursor)
+        for device_id in device_ids:
+            data = retrieve_data(cursor, device_id)
+            print(f"Data for device ID {device_id}: {data}")
         print(f"Device IDs: {device_ids}")
-    except:
-        device_ids = []
+    except Error as e:
+        print(f"Error connecting to database: {e}")
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
-    return jsonify({"device_ids": device_ids})
-
-
-
+    return jsonify(data)
 
 def run_flask_app():
     app.run(host='127.0.0.1', port=5000, debug=True, use_reloader=False)
-    
-    
-device_ids = retrieve_sensor_data()

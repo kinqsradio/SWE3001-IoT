@@ -4,40 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor Data Display</title>
-    <script>
-        function fetchSensorData(sensorId) {
-            fetch(`/retrieve-sensor-data?device_id=${sensorId}`)
-                .then(response => response.json())
-                .then(response => {
-                    // Extracting and displaying only the 'data' part of the response
-                    let sensorData = response.data;
-                    document.getElementById(sensorId + '_Display').textContent = JSON.stringify(sensorData, null, 2);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    
-        function updateAllSensorData() {
-            const sensors = ['MotionSensor_01', 'TemperatureHumidity_01', 'WaterLevelSensor_01'];
-            sensors.forEach(sensorId => fetchSensorData(sensorId));
-        }
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            setInterval(updateAllSensorData, 1); // Update every 10 seconds
-            updateAllSensorData(); // Initial update
-        });
-    </script>
-    
 </head>
 <body>
     <h1>Sensor Data Viewer</h1>
-
-    <h2>Latest Data from Motion Sensor</h2>
-    <pre id="MotionSensor_01_Display"></pre>
-
-    <h2>Latest Data from Temperature and Humidity Sensor</h2>
-    <pre id="TemperatureHumidity_01_Display"></pre>
-
-    <h2>Latest Data from Water Level Sensor</h2>
-    <pre id="WaterLevelSensor_01_Display"></pre>
+    {% if data %}
+        {% for device_id, sensor_data in data.items() %}
+            <h2>Latest Data for {{ device_id }}</h2>
+            <pre>{{ sensor_data | tojson | safe }}</pre>
+        {% endfor %}
+    {% else %}
+        <p>No data available.</p>
+    {% endif %}
 </body>
 </html>
