@@ -1,7 +1,7 @@
 from coapthon.server.coap import CoAP
 from coapthon.resources.resource import Resource
 from coapthon import defines
-from db import create_database, create_table, retrieve_sensor_data
+from db import create_database, create_table
 import json
 from mysql.connector import connect, Error
 from dbconfig import config
