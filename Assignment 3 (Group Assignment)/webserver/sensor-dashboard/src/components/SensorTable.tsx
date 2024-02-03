@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Select, MenuItem, FormControl, InputLabel, TablePagination } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Select, MenuItem, FormControl, InputLabel, TablePagination, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { ReactElement } from 'react';
 import { SensorDataItem, DeviceSensorData, useDeviceData } from './hooks/useDeviceData';
 
 
@@ -10,7 +8,7 @@ const SensorTable: React.FC = () => {
   const { devicesData, isLoading, error } = useDeviceData('https://r3n83zqx-9999.aue.devtunnels.ms/retrieve-all-sensor-data');
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(30);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   // Dynamically generate column order based on the selected device's data structure
   const generateColumnOrder = (deviceData: SensorDataItem[] | undefined) => {
@@ -36,7 +34,7 @@ const SensorTable: React.FC = () => {
 
   const handleChangePage = (_event: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
@@ -51,6 +49,7 @@ const SensorTable: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>Sensor Data Table</Typography>
       <FormControl fullWidth margin="normal">
         <InputLabel id="device-select-label">Select Device</InputLabel>
         <Select
@@ -92,6 +91,7 @@ const SensorTable: React.FC = () => {
       <TablePagination
         component="div"
         count={selectedDeviceData.length}
+        rowsPerPageOptions={[25, 50, 100]}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

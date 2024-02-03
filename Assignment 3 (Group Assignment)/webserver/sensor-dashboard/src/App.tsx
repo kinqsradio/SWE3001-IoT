@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SensorDatata from './pages/SensorData';
-import AboutPage from './pages/AboutPage';
+import SensorData from './pages/SensorData';
+import SensorDataVisualization from './pages/SensorDataVisualization';
 import Sidebar from './components/SideBar';
 import { Box } from '@mui/material';
 
@@ -15,8 +15,8 @@ function App() {
           sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
         >
           <Routes>
-            <Route path="/" element={<SensorDatata />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/" element={<SensorData />} />
+            <Route path="/visualisation" element={<SensorDataVisualization />} />
             {/* Define other routes here */}
           </Routes>
         </Box>

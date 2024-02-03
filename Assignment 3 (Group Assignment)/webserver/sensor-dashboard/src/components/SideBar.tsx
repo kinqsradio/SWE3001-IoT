@@ -34,21 +34,21 @@ const Sidebar: React.FC = () => {
             anchor="left"
         >
             <Typography variant="h6" sx={{ mx: 2, my: 3, fontWeight: 'medium' }}>
-                Current Time: {currentTime}
+                Time: {currentTime}
             </Typography>
             <List>
                 <ListItem button component={Link} to="/" sx={{ bgcolor: isCurrentPath('/') ? theme.palette.action.selected : 'inherit' }}>
                     <ListItemIcon>
                         <HomeIcon color={isCurrentPath('/') ? 'primary' : 'inherit'} />
                     </ListItemIcon>
-                    <ListItemText primary="Data Table" />
+                    <ListItemText primary="Sensor Data" />
                 </ListItem>
 
-                <ListItem button component={Link} to="/about" sx={{ bgcolor: isCurrentPath('/about') ? theme.palette.action.selected : 'inherit' }}>
+                <ListItem button component={Link} to="/visualisation" sx={{ bgcolor: isCurrentPath('/visualisation') ? theme.palette.action.selected : 'inherit' }}>
                     <ListItemIcon>
-                        <InfoIcon color={isCurrentPath('/about') ? 'primary' : 'inherit'} />
+                        <InfoIcon color={isCurrentPath('/visualisation') ? 'primary' : 'inherit'} />
                     </ListItemIcon>
-                    <ListItemText primary="About" />
+                    <ListItemText primary="Sensor Chart" />
                 </ListItem>
 
                 {/* Add more navigation links here */}

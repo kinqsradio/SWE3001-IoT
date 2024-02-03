@@ -14,6 +14,7 @@ def main(coap: bool = False):
             data = next(sensor_data_generator)  # Fetch next item from generator
             print("Data to send:", data)
             if coap:
+                print('Use COAP')
                 send_data_to_coap_server(data)
             else:
                 send_data_to_comm_server(data, comm_server_url)
