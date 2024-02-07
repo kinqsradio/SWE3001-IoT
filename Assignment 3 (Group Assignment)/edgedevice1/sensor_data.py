@@ -3,6 +3,7 @@ import serial
 import time
 from mock_serial import MockSerial
 import requests
+import json
 from coapthon.client.helperclient import HelperClient
 
 def get_sensor_data(use_mock=False):

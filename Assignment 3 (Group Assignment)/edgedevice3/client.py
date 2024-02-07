@@ -2,12 +2,12 @@ import requests
 import time
 from sensor_data import get_sensor_data, send_data_to_comm_server, send_data_to_coap_server
 
-def main(coap: bool = False):
+def main(coap: bool = False, mock: bool=False):
     # comm_server_url = "http://127.0.0.1:9999/forward-edge-data"
     comm_server_url = "https://r3n83zqx-9999.aue.devtunnels.ms/forward-edge-data"
     
     # Create a generator instance
-    sensor_data_generator = get_sensor_data(use_mock=True)  # Set use_mock=False for real data
+    sensor_data_generator = get_sensor_data(use_mock=mock)  # Set use_mock=False for real data
 
     while True:
         try:
@@ -26,4 +26,4 @@ def main(coap: bool = False):
             break
 
 if __name__ == "__main__":
-    main(coap=False)
+    main(coap=False, mock=True)
