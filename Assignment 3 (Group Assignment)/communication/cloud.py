@@ -14,6 +14,7 @@ CORS(communication_server)
 This is a quick backup method for group member to easily port data to the CoAP server.
 As Visual Studio Code does not support CoAP protocol, this will be a quick way to send data to the CoAP server.
 CoAP Protocol has been successfully tested by Anh and it works perfectly!
+THIS OPTION WILL BE DISBLED ON THE EDGE DEVICES THAT RECEIVED DATA FROM ADRUINO ON TEAM MEMBERS FOR COAP PROTOCOL!
 """
 @communication_server.route('/forward-edge-data', methods=['POST'])
 def forward_edge_data():
@@ -33,19 +34,12 @@ def forward_edge_data():
         return jsonify({"error": str(e)}), 500
 
 
+"""
+Retrieve all sensor data from the database and return it as a JSON object.
+THIS IS THE API THAT WILL BE USING TO DISPLAY TO USER INTERFACE
+"""
 @communication_server.route('/retrieve-all-sensor-data', methods=['GET'])
 def retrieve_all_sensor_data():
-    # retrieve_url = "http://127.0.0.1:5000/retrieve-sensor-data"
-    # try:
-    #     retrieve_response = requests.get(retrieve_url)
-    #     if retrieve_response.status_code == 200:
-    #         data = retrieve_response.json()
-    #     else:
-    #         return jsonify({"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}), 500
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-
-    # return jsonify(data)
     aggregated_data = []  
     try:
         connection = connect(**config)  
