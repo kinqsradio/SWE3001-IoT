@@ -31,7 +31,7 @@ def get_sensor_data(use_mock=False):
         time.sleep(2)  # Adjust to match the sensor's frequency
 
 # CoAP Server connection details
-COAP_SERVER_HOST = "127.0.0.1"
+COAP_SERVER_HOST = ""
 COAP_SERVER_PORT = 5684
 SENSOR_DATA_RESOURCE_PATH = "sensor-data"
 
