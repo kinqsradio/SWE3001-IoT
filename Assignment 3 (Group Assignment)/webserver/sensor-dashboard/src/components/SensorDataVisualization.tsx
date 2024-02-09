@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Box, FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
+import { Box, FormControl, InputLabel, Select, MenuItem, Typography, TextField } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useDeviceData, DeviceSensorData } from './hooks/useDeviceData';
+
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -18,6 +19,7 @@ import {
   ChartData 
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { format, startOfDay, endOfDay } from 'date-fns';
 
 ChartJS.register(
   CategoryScale,
@@ -36,11 +38,10 @@ const SensorDataChart: React.FC = () => {
   const apiUrl = 'https://r3n83zqx-9999.aue.devtunnels.ms/retrieve-all-sensor-data';
   const { devicesData, isLoading, error } = useDeviceData(apiUrl);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
-
+  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
 
   useEffect(() => {
     if (devicesData.length > 0 && !selectedDeviceId) {
-      // Optionally, prioritize selecting a specific device type if exists
       const defaultDeviceId = devicesData.find(device => device.device_id.includes('TemperatureHumidity_01'))?.device_id || devicesData[0].device_id;
       setSelectedDeviceId(defaultDeviceId);
     }
@@ -48,15 +49,16 @@ const SensorDataChart: React.FC = () => {
 
   const handleDeviceChange = (event: SelectChangeEvent<string>) => {
     setSelectedDeviceId(event.target.value);
+  };  
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(event.target.value);
   };
 
-  // TODO:
-  // FIX THE RECRETE CHART AS UNSTABLE CHART KEY (CHART LEGEND)
-  // THERE MIGHT BE A BETTER WAY TO HANDLE THE CHART DATA
   const generateChartData = (): ChartData<'line'> => {
     const selectedDevice = devicesData.find(device => device.device_id === selectedDeviceId);
     if (!selectedDevice) {
-      return { datasets: [] }; // Return an empty structure if no device is selected
+      return { datasets: [] }; 
     }
   
     // Sort data by time to ensure chronological order
@@ -67,32 +69,39 @@ const SensorDataChart: React.FC = () => {
       .filter(key => key !== 'DeviceID' && key !== 'Time' && key !== 'id')
       .map((key, index) => {
         // Map data points for each key, excluding non-data properties
-        const dataPoints = sortedData.map(data => ({
-          x: new Date(data.Time).getTime(), // Convert time to a suitable format for the x-axis
-          y: data[key] // Actual data value
-        }));
-
-        // Determine the latest value for labeling purposes
-        const latestValue = dataPoints[dataPoints.length - 1]?.y ?? 'N/A';
-
+        const dataPoints = sortedData.map(data => {
+          // Convert time to a suitable format for the x-axis
+          const xValue = new Date(data.Time).getTime();
+          let yValue;
+  
+          // Check if the key's value is numeric or text
+          if (typeof data[key] === 'number') {
+            yValue = data[key];
+          } else {
+            // For text data, map "Motion Detected" to 1, otherwise 0
+            yValue = data[key] === "Motion detected" ? 1 : 0;
+          }
+  
+          return { x: xValue, y: yValue };
+        });
+  
         return {
-          label: `${key} (latest: ${latestValue})`, 
+          label: key, 
           data: dataPoints,
           borderColor: `hsl(${index * 137.508}, 70%, 50%)`,
           backgroundColor: `hsla(${index * 137.508}, 70%, 50%, 0.5)`,
-          fill: false, 
+          fill: false,
         };
       });
   
     return {
-      labels: sortedData.map(data => new Date(data.Time).toISOString()), 
+      labels: sortedData.map(data => new Date(data.Time).toISOString()),
       datasets,
     };
   };
-    
-  const chartData = generateChartData();
+  
 
-  if (error) return <div>Error: {error.message}</div>;
+  const chartData = generateChartData();
 
   return (
     <Box>
@@ -110,31 +119,25 @@ const SensorDataChart: React.FC = () => {
           ))}
         </Select>
       </FormControl>
-
+      <TextField
+        label="Select Date"
+        type="date"
+        defaultValue={selectedDate}
+        onChange={handleDateChange}
+        fullWidth
+        sx={{ mb: 2 }}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
       {chartData && (
         <Line data={chartData} options={{
           responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                // Customize legend labels to include dynamic data
-                generateLabels: (chart) => {
-                  const labels = ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
-                  return labels.map(label => ({
-                    ...label,
-                    // Append the latest value to the label text if it exists
-                    text: `${label.text}`
-                  }));
-                }
-              }
-            }
-          },
           scales: {
             x: {
               type: 'time',
               time: {
-                unit: 'minute',
+                unit: 'day',
                 tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
               },
               title: { display: true, text: 'Time' }
@@ -155,4 +158,3 @@ const SensorDataChart: React.FC = () => {
 };
 
 export default SensorDataChart;
-

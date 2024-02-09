@@ -13,10 +13,10 @@ def get_sensor_data(use_mock=False):
     while True:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            if line in ["ON", "OFF"]:
+            if line in ["Motion detected", "Motion not detected"]:
                 try:
                     current_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    motion_status = "Motion Detected" if line == "ON" else "Motion Not Detected"
+                    motion_status = "Motion detected" if line == "Motion detected" else "Motion not detected"
                     sensor_data = {
                         "DeviceID": "MotionSensor_01",
                         "DeviceType": "MotionSensor",
@@ -30,7 +30,7 @@ def get_sensor_data(use_mock=False):
                     print(f"Error parsing data: {e}")
             else:
                 print("Invalid data received")
-        time.sleep(2)  # Adjust to match the sensor's frequency
+        time.sleep(2)
         
         
 # CoAP Server connection details

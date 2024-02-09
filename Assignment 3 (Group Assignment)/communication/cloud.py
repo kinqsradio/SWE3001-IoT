@@ -3,11 +3,18 @@ from flask import Flask, render_template
 import requests
 import json
 from flask_cors import CORS
+from config import config
+from db_helper import get_all_device_ids, retrieve_data
+from mysql.connector import connect, Error
 
 communication_server = Flask(__name__)
 CORS(communication_server)
 
-
+"""
+This is a quick backup method for group member to easily port data to the CoAP server.
+As Visual Studio Code does not support CoAP protocol, this will be a quick way to send data to the CoAP server.
+CoAP Protocol has been successfully tested by Anh and it works perfectly!
+"""
 @communication_server.route('/forward-edge-data', methods=['POST'])
 def forward_edge_data():
     data = request.json
@@ -28,17 +35,37 @@ def forward_edge_data():
 
 @communication_server.route('/retrieve-all-sensor-data', methods=['GET'])
 def retrieve_all_sensor_data():
-    retrieve_url = "http://127.0.0.1:5000/retrieve-sensor-data"
-    try:
-        retrieve_response = requests.get(retrieve_url)
-        if retrieve_response.status_code == 200:
-            data = retrieve_response.json()
-        else:
-            return jsonify({"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}), 500
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # retrieve_url = "http://127.0.0.1:5000/retrieve-sensor-data"
+    # try:
+    #     retrieve_response = requests.get(retrieve_url)
+    #     if retrieve_response.status_code == 200:
+    #         data = retrieve_response.json()
+    #     else:
+    #         return jsonify({"error": "Failed to retrieve data", "status_code": retrieve_response.status_code}), 500
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
-    return jsonify(data)
+    # return jsonify(data)
+    aggregated_data = []  
+    try:
+        connection = connect(**config)  
+        cursor = connection.cursor()
+        connection.database = "SensorDataDB"  
+        device_ids = get_all_device_ids(cursor)  
+        
+        for device_id in device_ids:
+            device_data = retrieve_data(cursor, device_id) 
+            # Append device data to the aggregated list
+            aggregated_data.append({"device_id": device_id, "data": device_data})
+    except Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": str(e)}), 500  
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close() 
+
+    return jsonify(aggregated_data)
 
 @communication_server.route('/')
 def home():

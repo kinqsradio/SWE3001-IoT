@@ -11,11 +11,9 @@ app = Flask(__name__)
 CORS(app)
 
 """
-This will be use to send data to the CoAP server!
-As we are opening port as HTTP/HTTPS, we wont be able to send data to the CoAP server directly.
-
-There were another option that can be use in edgedevices to send data directly to CoAP server through CoAP protocol.
-This will be just a back up case if we are not able to send data to the CoAP server directly.
+This is a quick backup method for group member to easily port data to the CoAP server.
+As Visual Studio Code does not support CoAP protocol, this will be a quick way to send data to the CoAP server.
+CoAP Protocol has been successfully tested by Anh and it works perfectly!
 """
 @app.route('/to-coap-server', methods=['POST'])
 def receive_and_forward_data():

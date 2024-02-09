@@ -51,6 +51,13 @@ const Sidebar: React.FC = () => {
                     <ListItemText primary="Sensor Chart" />
                 </ListItem>
 
+                <ListItem button component={Link} to="/status" sx={{ bgcolor: isCurrentPath('/status') ? theme.palette.action.selected : 'inherit' }}>
+                    <ListItemIcon>
+                        <InfoIcon color={isCurrentPath('/status') ? 'primary' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary="Status and Alarm" />
+                </ListItem>
+
                 {/* Add more navigation links here */}
             </List>
         </Drawer>

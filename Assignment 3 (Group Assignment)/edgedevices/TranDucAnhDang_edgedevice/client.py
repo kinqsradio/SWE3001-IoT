@@ -27,4 +27,4 @@ def main(coap: bool = False, mock: bool=False):
             break
 
 if __name__ == "__main__":
-    main(coap=False, mock=True)
+    main(coap=True, mock=False)
